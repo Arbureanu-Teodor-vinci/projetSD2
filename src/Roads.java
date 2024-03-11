@@ -2,28 +2,28 @@ import java.util.Objects;
 
 public class Roads {
 
-  private double longitude;
-  private double latitude;
+  private int idDepart;
+  private int idDestination;
 
-  public Roads(double longitude, double latitude) {
-    this.longitude = longitude;
-    this.latitude = latitude;
+  public Roads(int idDepart, int idDestination) {
+    this.idDepart = idDepart;
+    this.idDestination = idDestination;
   }
 
-  public double getLongitude() {
-    return longitude;
+  public int getIdDepart() {
+    return idDepart;
   }
 
-  public void setLongitude(double longitude) {
-    this.longitude = longitude;
+  public void setIdDepart(int idDepart) {
+    this.idDepart = idDepart;
   }
 
-  public double getLatitude() {
-    return latitude;
+  public int getIdDestination() {
+    return idDestination;
   }
 
-  public void setLatitude(double latitude) {
-    this.latitude = latitude;
+  public void setIdDestination(int idDestination) {
+    this.idDestination = idDestination;
   }
 
   @Override
@@ -35,12 +35,11 @@ public class Roads {
       return false;
     }
     Roads roads = (Roads) o;
-    return Double.compare(longitude, roads.longitude) == 0
-        && Double.compare(latitude, roads.latitude) == 0;
+    return idDepart == roads.idDepart && idDestination == roads.idDestination;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(longitude, latitude);
+    return Objects.hash(idDepart, idDestination);
   }
 }
