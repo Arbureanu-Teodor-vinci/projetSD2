@@ -1,9 +1,11 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Scanner;
 import java.util.Set;
@@ -76,23 +78,69 @@ public class Graph {
     }
     StringBuilder roads = new StringBuilder();
 double sommeDistance = 0;
+int count = 0;
 for (Cities city : path) {
   if(path.indexOf(city) != path.size()-1){
     double dis = Util.distance(city.getLongitude(),city.getLatitude(),path.get(path.indexOf(city)+1).getLongitude(),path.get(path.indexOf(city)+1).getLatitude());
     sommeDistance += dis;
+    count+=1;
     roads.append(city.getNom()).append(" -> ").append(path.get(path.indexOf(city) + 1).getNom())
         .append("  (").append(Math.round(dis * 100.0) / 100.0).append(" km)").append(" \n");
     }
 
     }
-    String response = "Trajet de " + depart + " à " + arrivee + ": "+ path.size() + " routes et " + sommeDistance + " km";
+    String response = "Trajet de " + depart + " à " + arrivee + ": "+ count + " routes et " + sommeDistance + " km";
     System.out.println(response);
     System.out.println(roads);
 
   }
 
   public void calculerItineraireMinimisantKm(String depart, String arrivee) {
-    // TODO
+    Map<String, Double> shortestDistances = new HashMap<>();
+    Map<String, String> previousCities = new HashMap<>();
+    PriorityQueue<Cities> queue = new PriorityQueue<>(
+        Comparator.comparingDouble(city -> shortestDistances.getOrDefault(city.getNom(), Double.MAX_VALUE)));
+
+    shortestDistances.put(depart, 0.0);
+    queue.add(findCityByName(depart));
+
+    while (!queue.isEmpty()) {
+      Cities current = queue.poll();
+      for (Roads road : mapCities.get(current)) {
+        Cities next = findCityById(road.getIdDestination());
+        double newDistance = shortestDistances.get(current.getNom()) + Util.distance(current.getLongitude(), current.getLatitude(), next.getLongitude(), next.getLatitude());
+        if (newDistance < shortestDistances.getOrDefault(next.getNom(), Double.MAX_VALUE)) {
+          shortestDistances.put(next.getNom(), newDistance);
+          previousCities.put(next.getNom(), current.getNom());
+          queue.add(next);
+        }
+      }
+    }
+
+    if (!previousCities.containsKey(arrivee)) {
+      System.out.println("No route found from " + depart + " to " + arrivee);
+      return;
+    }
+
+    LinkedList<String> path = new LinkedList<>();
+    for (String city = arrivee; city != null; city = previousCities.get(city)) {
+      path.addFirst(city);
+    }
+
+
+    StringBuilder roads = new StringBuilder();
+    double totalDistance = 0;
+    int count = 0;
+    for (int i = 0; i < path.size() - 1; i++) {
+      double distance = Util.distance(findCityByName(path.get(i)).getLongitude(), findCityByName(path.get(i)).getLatitude(), findCityByName(path.get(i + 1)).getLongitude(), findCityByName(path.get(i + 1)).getLatitude());
+      totalDistance += distance;
+      count += 1;
+      roads.append(path.get(i)).append(" -> ").append(path.get(i + 1)).append("  (").append(Math.round(distance * 100.0) / 100.0).append(" km)").append(" \n");
+    }
+
+    String response = "Trajet de " + depart + " à " + arrivee + ": " + count + " routes et " + Math.round(totalDistance * 100.0) / 100.0 + " km";
+    System.out.println(response);
+    System.out.println(roads);
   }
 
 
