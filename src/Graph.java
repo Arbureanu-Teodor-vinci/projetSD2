@@ -14,11 +14,15 @@ public class Graph {
 
   private Map<Cities, Set<Roads>> mapCities;
 
+  private Map<Integer,Cities> mapCitiesById;
+
   public Graph(File cities, File roads) throws FileNotFoundException {
     Scanner scCities = new Scanner(cities);
     Scanner scRoads = new Scanner(roads);
 
     this.mapCities = new HashMap<>();
+    this.mapCitiesById = new HashMap<>();
+
     while (scCities.hasNextLine()){
        String[] data = scCities.nextLine().split(",");
        int id = Integer.parseInt(data[0]);
@@ -26,6 +30,7 @@ public class Graph {
        double lat = Double.parseDouble(data[2]);
        double lon = Double.parseDouble(data[3]);
 
+       this.mapCitiesById.put(id,new Cities(id,name,lat,lon));
        this.mapCities.put(new Cities(id,name,lat,lon),new HashSet<Roads>());
     }
 
@@ -42,6 +47,9 @@ public class Graph {
 
     }
   }
+
+
+
   public void calculerItineraireMinimisantNombreRoutes(String depart, String arrivee) {
     // TODO
     Map<String, String> parentMap = new HashMap<>();
@@ -68,7 +76,7 @@ public class Graph {
 
     }
     if (!parentMap.containsKey(arrivee)) {
-      System.out.println("No route found from " + depart + " to " + arrivee);
+      System.out.println("Pas de route de " + depart + " à " + arrivee);
       return;
     }
 
@@ -95,9 +103,13 @@ for (Cities city : path) {
 
   }
 
+
+
+
   public void calculerItineraireMinimisantKm(String depart, String arrivee) {
     Map<String, Double> shortestDistances = new HashMap<>();
     Map<String, String> previousCities = new HashMap<>();
+    //A faire en TreeSet
     PriorityQueue<Cities> queue = new PriorityQueue<>(
         Comparator.comparingDouble(city -> shortestDistances.getOrDefault(city.getNom(), Double.MAX_VALUE)));
 
@@ -118,7 +130,7 @@ for (Cities city : path) {
     }
 
     if (!previousCities.containsKey(arrivee)) {
-      System.out.println("No route found from " + depart + " to " + arrivee);
+      System.out.println("Pas de routes de " + depart + " à " + arrivee);
       return;
     }
 
@@ -145,12 +157,7 @@ for (Cities city : path) {
 
 
   private Cities findCityById(int id) {
-    for (Cities city : mapCities.keySet()) {
-      if (city.getId() == id) {
-        return city;
-      }
-    }
-    return null;
+    return mapCitiesById.get(id);
   }
 
   private Cities findCityByName(String name) {
