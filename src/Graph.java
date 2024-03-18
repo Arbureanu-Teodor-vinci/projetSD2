@@ -70,19 +70,24 @@ public class Graph {
       return;
     }
 
-    LinkedList<String> path = new LinkedList<>();
-    String response = "Shortest path from " + depart + " to " + arrivee + ": ";
+    LinkedList<Cities> path = new LinkedList<>();
     for (String city = arrivee; city != null; city = parentMap.get(city)) {
-      path.addFirst(city);
+      path.addFirst(findCityByName(city));
     }
-    System.out.println(response);
-
-for (String city : path) {
+    StringBuilder roads = new StringBuilder();
+double sommeDistance = 0;
+for (Cities city : path) {
   if(path.indexOf(city) != path.size()-1){
-    System.out.print(city + " -> "+ path.get(path.indexOf(city)+1) + " \n");
+    double dis = Util.distance(city.getLongitude(),city.getLatitude(),path.get(path.indexOf(city)+1).getLongitude(),path.get(path.indexOf(city)+1).getLatitude());
+    sommeDistance += dis;
+    roads.append(city.getNom()).append(" -> ").append(path.get(path.indexOf(city) + 1).getNom())
+        .append("  (").append(Math.round(dis * 100.0) / 100.0).append(" km)").append(" \n");
     }
 
     }
+    String response = "Trajet de " + depart + " à " + arrivee + ": "+ path.size() + " routes et " + sommeDistance + " km";
+    System.out.println(response);
+    System.out.println(roads);
 
   }
 
