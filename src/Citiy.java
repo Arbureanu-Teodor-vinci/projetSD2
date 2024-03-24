@@ -1,13 +1,13 @@
 import java.util.Objects;
 
-public class Cities {
+public class Citiy {
 
   private int id;
   private String nom;
   private double longitude;
   private double latitude;
 
-  public Cities(int id, String nom,double longitude,double latitude){
+  public Citiy(int id, String nom,double longitude,double latitude){
     this.id=id;
     this.nom=nom;
     this.longitude=longitude;
@@ -54,7 +54,7 @@ public class Cities {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Cities cities = (Cities) o;
+    Citiy cities = (Citiy) o;
     return id == cities.id && Double.compare(longitude, cities.longitude) == 0
         && Double.compare(latitude, cities.latitude) == 0 && Objects.equals(nom,
         cities.nom);
